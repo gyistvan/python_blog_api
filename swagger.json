@@ -1,0 +1,89 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "My Flask RESTful API"
+  },
+  "host": "localhost:5000",
+  "basePath": "/",
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/posts/getAll": {
+      "get": {
+        "summary": "Get all posts",
+        "description": "Returns an array of all posts",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "An array of post objects",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Post"
+              }
+            }
+          },
+          "404": {
+            "description": "No posts found"
+          }
+        }
+      }
+    },
+    "/posts/getById/<string:id>": {
+      "get": {
+        "summary": "Get a post by ID",
+        "description": "Returns a post if found with the sent Id",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "a post object",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/Post"
+            }
+          },
+          "404": {
+            "description": "Post not found"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Post": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "image_url": {
+          "type": "string"
+        },
+        "short_text": {
+          "type": "string"
+        },
+        "long_text": {
+          "type": "string"
+        },
+        "author_id": {
+          "type": "string"
+        },
+        "author_name": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

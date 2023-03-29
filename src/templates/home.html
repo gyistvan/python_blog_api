@@ -1,0 +1,16 @@
+<html>
+
+<head>
+  <title>test page</title>
+</head>
+
+<body>
+  {% for post in posts %}
+  <h1>{{ post["title"] }}</h1>
+  <p>{{ post["short_text"] }}</p>
+  <img src="{{ post[" img_url"] }}" />
+  <span>author: {{ post["author_name"] }}</span>
+  {% endfor %}
+</body>
+
+</html>
