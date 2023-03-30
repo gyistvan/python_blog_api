@@ -10,7 +10,7 @@
     "http"
   ],
   "paths": {
-    "/posts/getAll": {
+    "/posts/": {
       "get": {
         "summary": "Get all posts",
         "description": "Returns an array of all posts",
@@ -31,9 +31,39 @@
             "description": "No posts found"
           }
         }
+      },
+      "post": {
+        "summary": "New post",
+        "description": "Creates a new post in the db",
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "new post to create",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/NewPost"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The newly created post populated with _id, and created_at fields",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/Post"
+            }
+          }
+        }
       }
     },
-    "/posts/getById/<string:id>": {
+    "/posts/<string:id>": {
       "get": {
         "summary": "Get a post by ID",
         "description": "Returns a post if found with the sent Id",
@@ -52,6 +82,39 @@
             "description": "Post not found"
           }
         }
+      },
+      "patch": {
+        "summary": "Update a post",
+        "description": "Update one or more fields in a post",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Update one or more fields in a post",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/NewPost"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "a post object",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/Post"
+            }
+          },
+          "400": {
+            "description": "One of the restricted fields were sent, _id, id, created_at"
+          },
+          "404": {
+            "description": "Post not found"
+          }
+        }
       }
     }
   },
@@ -59,13 +122,36 @@
     "Post": {
       "type": "object",
       "properties": {
-        "id": {
+        "_id": {
           "type": "string"
         },
         "title": {
           "type": "string"
         },
         "created_at": {
+          "type": "string"
+        },
+        "image_url": {
+          "type": "string"
+        },
+        "short_text": {
+          "type": "string"
+        },
+        "long_text": {
+          "type": "string"
+        },
+        "author_id": {
+          "type": "string"
+        },
+        "author_name": {
+          "type": "string"
+        }
+      }
+    },
+    "NewPost": {
+      "type": "object",
+      "properties": {
+        "title": {
           "type": "string"
         },
         "image_url": {

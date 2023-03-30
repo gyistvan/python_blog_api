@@ -8,25 +8,19 @@ from datetime import datetime
 
 
 class Post(Resource):
-    @swagger.operation(
-        notes="Get all posts",
-        responseClass=Post.__name__,
-        nickname="getPosts",
-        parameters=[
-            {
-                "name": "message_id",
-                "description": "The ID of the message to retrieve",
-                "required": True,
-                "allowMultiple": False,
-                "dataType": "string",
-                "paramType": "path",
-            }
-        ],
-        responseMessages=[
-            {"code": 200, "message": "Message found"},
-            {"code": 404, "message": "Message not found"},
-        ],
-    )
+    def serialize_request_body(self, fields, data, is_required):
+        error_messages = {}
+
+        for field in fields:
+            if is_required:
+                if field not in data:
+                    error_messages[field] = field + " is required"
+            else:
+                if field in data:
+                    error_messages[field] = field + " is restricted"
+
+        return error_messages
+
     def postHandler2(self, id):
         if request.method == "GET":
             return self.getById(id=id)
@@ -75,8 +69,19 @@ class Post(Resource):
         Create a post
         """
         collection = db["blog_app"]
-
         data = request.json
+        required_fields = [
+            "title",
+            "image_url",
+            "short_text",
+            "long_text",
+            "author_id",
+            "author_name",
+        ]
+        error_messages = self.serialize_request_body(required_fields, data, True)
+        if len(error_messages) > 0:
+            return jsonify(error_messages), 400
+
         dt = str(round(datetime.now().timestamp()))
         data["created_at"] = dt
         collection.insert_one(data)
@@ -87,9 +92,13 @@ class Post(Resource):
     def updatePost(self, id):
         object_id = ObjectId(id)
         filter = {"_id": object_id}
-
+        restricted_fields = ["_id", "id", "created_at"]
+        data = request.json
+        error_messages = self.serialize_request_body(restricted_fields, data, False)
+        if len(error_messages) > 0:
+            return jsonify(error_messages), 400
         collection = db["blog_app"]
-        update = {"$set": request.json}
-        result = collection.update_one(filter, update)
+        update = {"$set": data}
+        collection.update_one(filter, update)
 
-        return jsonify(result)
+        return self.getById(id=id)
